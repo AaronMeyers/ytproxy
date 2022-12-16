@@ -20,18 +20,7 @@ router.get('/', function(req, res, next) {
 
 router.get( '/list', function( req, res, next ) {
 	var ids = getSavedIds();
-	var toBeWritten = '';
-
-	ids.forEach( (id) => {
-		var line = id + '\t' +
-			'<a href="./?id=' + id + '&quality=18">360p</a>\t' +
-			'<a href="./?id=' + id + '&quality=136">720p</a>\t' +
-			'<a href="./?id=' + id + '&quality=140">audio</a>\t' +
-			'<br/>';
-		toBeWritten += line;  
-	});
-
-	res.send( toBeWritten );
+	res.render( 'yt_list', {title: 'test ids', ids: ids} );
 });
 
 router.get( '/audioformats', async function( req, res, next ) {
@@ -47,6 +36,7 @@ router.get( '/audioformats', async function( req, res, next ) {
 	
 	let info = await ytdl.getInfo( 'https://youtube.com/watch?v=' + req.query.id );
 	let audioFormats = ytdl.filterFormats(info.formats, 'audioonly');
+	// let audioFormats = ytdl.filterFormats(info.formats, format => format.container === 'webm' );
 
 	let toBeWritten = 'format itags:<br/>';
 	audioFormats.forEach( (fmt) => {
@@ -55,13 +45,7 @@ router.get( '/audioformats', async function( req, res, next ) {
 	res.send( toBeWritten );
 
 	// res.send('Formats with only audio: ' + audioFormats.length);
-});
-
-router.get( '/test', function( req, res, next ) {
-	var quality = req.query.quality ?? '18';
-
-	res.send( 'quality was: ' + quality );
-});
+});	
 
 router.get( '/info', function( req, res, next ) {
 	var ytUrl = 'https://youtube.com/watch?v=' + req.query.id;

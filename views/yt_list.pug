@@ -1,0 +1,17 @@
+extends layout
+
+block content
+  div(class='vh-100 container' style='background-color:#AAA')
+    h1= title
+
+    div.container
+      each id in ids
+        div.row( style='background-color:rgba(255,255,255, .2')
+          div.col-sm
+            a(href=`http://youtube.com/watch?v=` + id )=id
+          div.col-sm
+            a(href=`./?id=` + id + `&quality=18` ) 360p
+          div.col-sm
+            a(href=`./?id=` + id + `&quality=136` ) 720p
+          div.col-sm
+            a(href=`./?id=` + id + `&quality=140` ) audio
