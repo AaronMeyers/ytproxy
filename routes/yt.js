@@ -13,8 +13,8 @@ router.get('/', function(req, res, next) {
 
 
 	var ytUrl = 'https://youtube.com/watch?v=' + req.query.id;
-	var quality = req.query.quality ?? '18';
-	res.header( "Content-Disposition", 'attachment; filename="Video.mp4"');
+	var quality = req.query.quality ?? ['22', '18'];
+	res.header( "Content-Disposition", 'attachment; filename="' + req.query.id + '.mp4"');
 	ytdl( ytUrl, {quality: quality }).pipe( res );
 });
 
@@ -35,12 +35,13 @@ router.get( '/audioformats', async function( req, res, next ) {
 	// res.send( 'hm' );
 	
 	let info = await ytdl.getInfo( 'https://youtube.com/watch?v=' + req.query.id );
-	let audioFormats = ytdl.filterFormats(info.formats, 'audioonly');
+	// let audioFormats = ytdl.filterFormats(info.formats, 'audioonly');
 	// let audioFormats = ytdl.filterFormats(info.formats, format => format.container === 'webm' );
+	let audioFormats = ytdl.filterFormats(info.formats, format => format.audioBitrate && format.bitrate );
 
 	let toBeWritten = 'format itags:<br/>';
 	audioFormats.forEach( (fmt) => {
-		toBeWritten += fmt.itag + '–' + fmt.audioBitrate + '–' + fmt.container + '<br/>';
+		toBeWritten += fmt.itag + '–' + fmt.audioBitrate + '–' + fmt.container + ' --- ' + fmt.height + '<br/>';
 	})
 	res.send( toBeWritten );
 
