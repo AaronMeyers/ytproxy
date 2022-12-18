@@ -1,0 +1,41 @@
+extends layout
+
+block scripts
+  script(src='../jquery.min.js')
+  script(src='../js/bootstrap.min.js')
+
+block content
+  div(class='vh-100 container' style='background-color:#AAA')
+    form
+      div.form-group
+        label(for='the_text_area') Type a message here
+        textarea( id='the_text_area' class='form-control' rows=5) 
+        
+      div.form-group
+        button( id='the_button' type='button' class='btn btn-primary') Primary
+      
+      audio( id='the_audio') 
+
+  script.
+    $('#the_button').prop('disabled', true )
+    $('#the_text_area').bind( 'input propertychange', function() {
+      $('#the_button').prop( 'disabled', this.value.length == 0 )
+    })
+    $('#the_button').click( function() {
+      $.ajax({
+        url: './hear',
+        xhrFields:{
+          responseType: 'blob'
+        },
+        data: {
+          message: $('#the_text_area').val()
+        },
+        success: function( result ) {
+          var blob = new Blob([result], {type: 'audio/mpeg'});
+          var objectUrl = URL.createObjectURL(blob);
+          $('#the_audio').attr( 'src', objectUrl )
+          $('#the_audio')[0].play()
+        }
+      })
+    })
+
