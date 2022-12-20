@@ -3,9 +3,23 @@ var router = express.Router();
 
 const { textToSpeech } = require('../azure-cognitiveservices-speech');
 
+const styles = [
+	"general",
+	"chat",
+	"angry",
+	"cheerful",
+	"excited",
+	"friendly",
+	"hopeful",
+	"sad",
+	"shouting",
+	"terrified",
+	"unfriendly",
+	"whispering"
+]
 
 router.get( '/test', async( req, res, next ) => {
-	res.render( 'azure_tts', {title: 'test azure tts' } );
+	res.render( 'azure_tts', {title: 'test azure tts', styles: styles } );
 });
 
 // creates a temp file on server, the streams to client
@@ -16,18 +30,12 @@ router.get('/', async (req, res, next) => {
 	const region = "eastus";
 	const file = null;
   
-	const { message } = req.query;
+	let { message, style } = req.query;
 
-	const styles = [
-		"general",
-		"shouting",
-		"whispering",
-		"cheerful",
-		"sad",
-		"friendly"
-	]
 
-	var chosenStyle = styles[~~(Math.random()*styles.length)];
+	style = styles.indexOf( style ) < 0 ? null : style;
+
+	var chosenStyle = style ?? styles[~~(Math.random()*styles.length)];
 	console.log( chosenStyle );
 	
 	if (!key || !region || !message) res.status(404).send('Invalid query string');

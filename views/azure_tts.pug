@@ -10,6 +10,11 @@ block content
       div.form-group
         label(for='the_text_area') Type a message here
         textarea( id='the_text_area' class='form-control' rows=5) 
+      
+      div.form-group 
+        select(name="styleDropdown", id="styleDropdown" class="btn btn-primary dropdown-toggle")
+          each style in styles
+            option= style
         
       div.form-group
         button( id='the_button' type='button' class='btn btn-primary') Primary
@@ -28,7 +33,8 @@ block content
           responseType: 'blob'
         },
         data: {
-          message: $('#the_text_area').val()
+          message: $('#the_text_area').val(),
+          style: $('#styleDropdown').val()
         },
         success: function( result ) {
           var blob = new Blob([result], {type: 'audio/mpeg'});
