@@ -5,6 +5,8 @@ package-lock.json
 *.gz
 .DS_Store
 .env
+[Dd]ownloaded/
+settings.json
 
 # Coveralls
 .nyc_output

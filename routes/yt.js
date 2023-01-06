@@ -2,6 +2,10 @@ var express = require('express');
 var router = express.Router();
 const ytdl = require('ytdl-core');
 const fs = require( 'fs' );
+// const downloadPlaylist = require( '../downloadPlaylist' );
+
+const downloadPath = 'downloaded/'
+
 
 router.get('/', function(req, res, next) {
 	
@@ -11,11 +15,21 @@ router.get('/', function(req, res, next) {
 		return;
 	}
 
+	// check if we have this file locally
+
 
 	var ytUrl = 'https://youtube.com/watch?v=' + req.query.id;
 	var quality = req.query.quality ?? ['22', '18'];
 	res.header( "Content-Disposition", 'attachment; filename="' + req.query.id + '.mp4"');
-	ytdl( ytUrl, {quality: quality }).pipe( res );
+	var localPath = downloadPath + req.query.id + '.mp4';
+	if ( fs.existsSync( localPath ) )
+	{
+		fs.createReadStream( localPath ).pipe( res );
+	}
+	else
+	{
+		ytdl( ytUrl, {quality: quality }).pipe( res );
+	}
 });
 
 router.get( '/list', function( req, res, next ) {

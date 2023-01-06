@@ -3,7 +3,9 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var fs = require( 'fs' );
 require('dotenv').config();
+const downloadPlaylists = require( './downloadPlaylist');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -44,5 +46,27 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+var playlists = [
+  "PLY0S3gzWdc0ERQPHMgjsoglQZD0v786-z",
+  null
+];
+
+// check if the settings file is present
+if ( fs.existsSync( 'settings.json' ) )
+{
+  var settingsJson = JSON.parse(fs.readFileSync('settings.json', 'utf8'));
+  var playlistIds = [];
+  var playlistInfos = settingsJson["musicPlaylists"];
+  if ( playlistInfos )
+  {
+    playlistInfos.forEach(pi => {
+      playlistIds.push( pi['id'] );
+    });
+    downloadPlaylists( playlistIds );
+  }
+}
+
+// downloadPlaylists( playlists );
 
 module.exports = app;
