@@ -1,0 +1,36 @@
+extends layout 
+block scripts
+  script(src='../jquery.min.js')
+  script(src='../js/bootstrap.min.js')
+
+block content
+  button( id='button') Button
+  script.
+    document.addEventListener( "DOMContentLoaded", () => {
+      console.log( 'dom loaded' );
+      $('#button').click( ()=> {
+        console.log( 'click' );
+        startWebSocket();
+      });
+      //- startWebSocket();
+    });
+    function startWebSocket()
+    {
+      let ws = new WebSocket(`ws://${window.location.host}`);
+      //- let ws = new WebSocket( 'ws://127.0.0.1:3000' );
+      //- let ws = new WebSocket('ws://localhost:8080' );
+      ws.addEventListener( 'open', (e)=> {
+        console.log( 'open' );
+      });
+      ws.addEventListener( 'close', (e)=> {
+        console.log( 'close: ' + e );
+      });
+
+      ws.addEventListener( 'error', (e)=> {
+        console.log( 'error' );
+      });
+
+      ws.addEventListener( 'message', (msg) => {
+        console.log( 'message: ' + msg );
+      });
+    }

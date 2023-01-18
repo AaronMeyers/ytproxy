@@ -11,7 +11,8 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var ytRouter = require( './routes/yt' );
 
-var app = express();
+const app = express();
+const server = require('http').createServer(app);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -30,6 +31,24 @@ app.use('/users', usersRouter);
 app.use('/yt', ytRouter );
 app.use('/gtts', require( './routes/gtts' ) );
 app.use('/text-to-speech', require( './routes/azure_tts' ) );
+// app.use('/headtrack', require( './routes/headtrack' ) );
+require('./routes/headtrack')(app,server);
+
+
+
+// const ws = require('ws');
+// const wss = new ws.Server({ server });
+
+// wss.on('connection', (ws) => {
+//   console.log( 'connection!' );
+//   ws.on( 'close', (e) => {
+//     console.log( 'connection closed' );
+//   });
+// });
+// app.get( '/headtrack/test', (req, res ) => {
+//   res.render( 'headtrack', {title: 'test headtrack'} );
+// });
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -47,11 +66,6 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-var playlists = [
-  "PLY0S3gzWdc0ERQPHMgjsoglQZD0v786-z",
-  null
-];
-
 // check if the settings file is present
 if ( fs.existsSync( 'settings.json' ) )
 {
@@ -67,6 +81,10 @@ if ( fs.existsSync( 'settings.json' ) )
   }
 }
 
-// downloadPlaylists( playlists );
 
-module.exports = app;
+
+
+module.exports = {
+  app: app,
+  server: server
+}
