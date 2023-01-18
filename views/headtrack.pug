@@ -8,11 +8,11 @@ block content
   script.
     document.addEventListener( "DOMContentLoaded", () => {
       console.log( 'dom loaded' );
-      $('#button').click( ()=> {
-        console.log( 'click' );
-        startWebSocket();
-      });
-      //- startWebSocket();
+      //- $('#button').click( ()=> {
+      //-   console.log( 'click' );
+      //-   startWebSocket();
+      //- });
+      startWebSocket();
     });
     function startWebSocket()
     {
@@ -30,7 +30,8 @@ block content
         console.log( 'error' );
       });
 
-      ws.addEventListener( 'message', (msg) => {
-        console.log( 'message: ' + msg );
+      ws.addEventListener( 'message', (event) => {
+        const data = JSON.parse( event.data );
+        console.log( 'message: ' + data.message );
       });
     }
