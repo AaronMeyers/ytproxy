@@ -1,27 +1,8 @@
-// var express = require('express');
-// var router = express.Router();
-// const ws = require('ws');
-// const server = require('http').createServer(app);
-// const wss = new ws.Server({ server });
-
-// // wss.on('connection', (ws) => {
-// // 	console.log( 'connection!' );
-// // 	ws.on( 'close', (e) => {
-// // 		console.log( 'connection closed' );
-// // 	});
-// // });
-
-// router.get( '/test', function( req, res, next ) {
-// 	res.render( 'headtrack', {title: 'test headtrack' } );
-// });
-
-// module.exports = router;
-
 module.exports = function(app, server) {     
 
-	const ws = require('ws');
+	// const ws = require('ws');
 	// const server = require('http').createServer(app);
-	const wss = new ws.Server({ server });
+	const wss = new (require('ws')).Server({ server });
 	// console.log( wss );
 
 	let senders = [];
@@ -33,14 +14,16 @@ module.exports = function(app, server) {
 
 	wss.on('connection', (ws) => {
 		
-		wss.clients.forEach((client) => {
-			client.send(JSON.stringify({message: 'someone connected!'}));
-		});
 		console.log( 'connection!' );
 		console.log( 'num clients: ' + wss.clients.size );
 		ws.on( 'message', (message) => {
+
 			var json = JSON.parse( message );
-			var theMessage = json.message;
+			let theMessage = json.message;
+
+			// wss.clients.forEach((client) => {
+			// 	client.send(JSON.stringify({message: theMessage}));
+			// });
 
 			switch ( theMessage )
 			{
@@ -91,8 +74,4 @@ module.exports = function(app, server) {
 				receivers.splice( receiverIndex, 1 );
 		});
 	});
-
-	// router.get('/myroute', app.sessionMW, function (req, res, next) {
-
-	// });
 }

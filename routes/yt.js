@@ -2,12 +2,12 @@ var express = require('express');
 var router = express.Router();
 const ytdl = require('ytdl-core');
 const fs = require( 'fs' );
+const {downloadYoutube} = require( '../downloadPlaylist')
 // const downloadPlaylist = require( '../downloadPlaylist' );
 
 const downloadPath = 'downloaded/'
 
-
-router.get('/', function(req, res, next) {
+router.get('/', async function(req, res, next) {
 	
 	if ( req.query.id == null || !ytdl.validateID( req.query.id ) )
 	{
@@ -22,13 +22,31 @@ router.get('/', function(req, res, next) {
 	var quality = req.query.quality ?? ['22', '18'];
 	res.header( "Content-Disposition", 'attachment; filename="' + req.query.id + '.mp4"');
 	var localPath = downloadPath + req.query.id + '.mp4';
-	if ( fs.existsSync( localPath ) )
+
+	var forceDownload = req.query.force ?? false;
+	console.log( 'force download: ' + forceDownload );
+
+	let errorSent = false;
+
+	if ( fs.existsSync( localPath && !forceDownload ) )
 	{
 		fs.createReadStream( localPath ).pipe( res );
 	}
 	else
 	{
-		ytdl( ytUrl, {quality: quality }).pipe( res );
+		if ( forceDownload ) {
+			let success = await downloadYoutube( req.query.id );
+			if ( success ) {
+				fs.createReadStream( localPath ).pipe( res );
+			}
+			else {
+				console.log( 'there was a goddamn error' );
+				res.sendStatus( 500 );
+			}
+		}
+		else {
+			ytdl( ytUrl, {quality: quality }).pipe( res );
+		}
 	}
 });
 
